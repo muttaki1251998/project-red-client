@@ -53,7 +53,7 @@ export default function CustomNavbar() {
           <Link href={`/`} legacyBehavior>
             <a className="flex-shrink-0 flex items-center">
               <img
-                src="/logo.png"
+                src="/logo.PNG"
                 alt="Logo"
                 className={`object-contain ${
                   scroll
