@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { Modal, ModalContent, ModalHeader, ModalBody, useDisclosure, Button } from "@nextui-org/react";
 import { adminLogout } from "../store/adminSlice";
+
 const AdminPage = () => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -11,20 +12,30 @@ const AdminPage = () => {
   const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedImage, setSelectedImage] = useState(null);
+  const isAdminLoggedIn = useSelector((state) => state.admin.isAdminLoggedIn);
 
-  const fetchUsers = async () => {
-    try {
-      const response = await axios.get(`${process.env.NEXT_BACKEND_API_URL}/admin/users`, {
-        headers: {
-          "x-frontend-id": "project-red",
-        },
-      });
-      setUsers(response.data);
-    } catch (error) {
-      console.error("Error fetching users:", error);
+  useEffect(() => {
+    if (!isAdminLoggedIn) {
+      router.push("/admin/admin-login");
+      return;
     }
-    setLoading(false);
-  };
+
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_BACKEND_API_URL}/admin/users`, {
+          headers: {
+            "x-frontend-id": "project-red",
+          },
+        });
+        setUsers(response.data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+      setLoading(false);
+    };
+
+    fetchUsers();
+  }, [isAdminLoggedIn, router]);
 
   const handleVerifyUser = async (userId) => {
     try {
@@ -45,10 +56,6 @@ const AdminPage = () => {
     onOpen();
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
   const handleLogout = () => {
     dispatch(adminLogout());
     router.push("/");
@@ -62,18 +69,12 @@ const AdminPage = () => {
     <div className="flex min-h-screen">
       {/* Sidebar */}
       <div className="fixed left-0 top-0 w-64 h-full bg-[#1D2334] p-4 z-50 transition-transform">
-        <a
-          href="#"
-          className="flex items-center pb-4 border-b border-b-gray-800"
-        >
+        <a href="#" className="flex items-center pb-4 border-b border-b-gray-800">
           <h2 className="text-white text-2xl">ADMIN</h2>
         </a>
         <ul className="mt-4">
           <li className="mb-1 group">
-            <button
-              onClick={() => router.push("/admin")}
-              className="flex font-semibold items-center py-2 px-4 text-white rounded-md w-full text-left"
-            >
+            <button onClick={() => router.push("/admin")} className="flex font-semibold items-center py-2 px-4 text-white rounded-md w-full text-left">
               <i className="ri-home-2-line mr-3 text-lg"></i>
               <span className="text-sm">Dashboard</span>
             </button>

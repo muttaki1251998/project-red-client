@@ -12,10 +12,8 @@ const axiosInstance = axios.create({
 export const adminLogin = createAsyncThunk('admin/login', async ({ email, password }, { rejectWithValue }) => {
   try {
     const response = await axiosInstance.post('/admin/login', { email, password });
-    const token = response.data.token;
-    localStorage.setItem('adminToken', token); // Store admin token in localStorage
-
-    return { admin: response.data.admin, token }; // Return admin and token
+    localStorage.setItem('adminToken', response.data.token); // Store admin token
+    return response.data.admin;
   } catch (error) {
     return rejectWithValue(error.response.data);
   }
@@ -24,7 +22,7 @@ export const adminLogin = createAsyncThunk('admin/login', async ({ email, passwo
 // Admin logout action creator
 export const adminLogout = createAsyncThunk('admin/logout', async (_, { rejectWithValue }) => {
   try {
-    localStorage.removeItem('adminToken'); // Remove admin token from localStorage
+    localStorage.removeItem('adminToken'); // Remove admin token
     return true;
   } catch (error) {
     return rejectWithValue(error.response.data);
@@ -34,16 +32,19 @@ export const adminLogout = createAsyncThunk('admin/logout', async (_, { rejectWi
 // Initial state for the admin slice
 const initialState = {
   admin: null,
-  token: null, // Store the JWT token here
   status: 'idle',
   error: null,
-  isAdminLoggedIn: false,
+  isAdminLoggedIn: false, // Default to false, update in useEffect
 };
 
 const adminSlice = createSlice({
   name: 'admin',
   initialState,
-  reducers: {},
+  reducers: {
+    setAdminLoggedIn(state, action) {
+      state.isAdminLoggedIn = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(adminLogin.pending, (state) => {
@@ -52,8 +53,7 @@ const adminSlice = createSlice({
       })
       .addCase(adminLogin.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.admin = action.payload.admin;
-        state.token = action.payload.token; // Store the token in the state
+        state.admin = action.payload;
         state.isAdminLoggedIn = true;
       })
       .addCase(adminLogin.rejected, (state, action) => {
@@ -68,7 +68,6 @@ const adminSlice = createSlice({
       .addCase(adminLogout.fulfilled, (state) => {
         state.status = 'succeeded';
         state.admin = null;
-        state.token = null; // Clear the token from the state
         state.isAdminLoggedIn = false;
       })
       .addCase(adminLogout.rejected, (state, action) => {
@@ -77,5 +76,7 @@ const adminSlice = createSlice({
       });
   },
 });
+
+export const { setAdminLoggedIn } = adminSlice.actions;
 
 export default adminSlice.reducer;

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Card, CardHeader, CardBody, Image } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, Image, Spinner } from "@nextui-org/react";
 import axios from "axios";
 import Link from "next/link";
-import { SearchIcon } from "@heroicons/react/solid"; // Importing Heroicons
+import { SearchIcon } from "@heroicons/react/solid";
 
 const ListUsers = () => {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true); // State to track loading
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -22,6 +23,8 @@ const ListUsers = () => {
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
+      } finally {
+        setLoading(false); // Set loading to false once data is fetched
       }
     };
 
@@ -35,6 +38,14 @@ const ListUsers = () => {
         user.city.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   });
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-8">
