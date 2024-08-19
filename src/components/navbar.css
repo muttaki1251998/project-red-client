@@ -1,0 +1,46 @@
+.custom-navbar {
+  background-color: #000000;
+  padding: 0.5rem 1rem;
+  /* Adjust padding for height */
+  height: 30px;
+  /* Adjust height as needed */
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand-text {
+  color: white;
+  font-size: 1.2rem;
+  /* Adjust font size if needed */
+  letter-spacing: 0.1rem;
+}
+
+.navbar-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.contact-item {
+  color: rgb(66, 86, 94);
+  transition: color 0.3s ease-in-out;
+  font-size: 0.9rem;
+  /* Adjust font size if needed */
+}
+
+.contact-item:hover {
+  color: #88baca;
+  /* Replace with the desired hover color */
+}
+
+.navbar-item-button a {
+  color: #185fb0;
+  text-decoration: none;
+  transition: color 0.3s ease-in-out;
+}
+
+.navbar-item-button a:hover {
+  color: #b3b3b3;
+  /* Replace with the desired hover color */
+}
+
