@@ -30,8 +30,9 @@ const ListUsers = () => {
 
   const filteredUsers = users.filter((user) => {
     return (
-      user.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.city.toLowerCase().includes(searchTerm.toLowerCase())
+      user.isVerified && // Only include verified users
+      (user.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.city.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   });
 
